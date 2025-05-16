@@ -1,0 +1,14 @@
+
+.inputs{
+    width: 100%;
+    text-align: center;
+    height: 100%;
+}
+
+
+input{
+    margin-bottom: 10px;
+    width: 50%;
+    height: 16%;
+
+}
