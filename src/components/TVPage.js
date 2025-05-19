@@ -11,7 +11,7 @@ const TVPage = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        navigate(`/results?title=${encodeURIComponent(title)}`)
+        navigate(`/results?title=${encodeURIComponent(title)}&format=tv`)
     }
     return(
         <div className='container'>

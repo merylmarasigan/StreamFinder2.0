@@ -5,12 +5,14 @@ import './Results.css'
 
 
 
-const Results = (prop) => {
+const Results = () => {
     const [searchParams] = useSearchParams();
     const title = searchParams.get('title');
+    const format = searchParams.get('format');
     const [isLoading, setIsLoading] = useState(false);
     const [results, setResults] = useState([]);
     const [error, setError] = useState(null);
+    const [data, setData] = useState(null)
 
 
     function createCard(card) {
@@ -33,39 +35,70 @@ const Results = (prop) => {
     useEffect(() => {
         if(title){
             console.log(`title: ${title}`);
-        }
+        
 
-        const fetchServices = async () => {
-            setError(null);
+            const fetchServices = async () => {
+                setError(null);
+                setIsLoading(true);
 
-            const options = {
-                method: 'GET',
-                headers: {
-                  accept: 'application/json',
-                  Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NjA3OTFlZjg2MTFlZTYxYmJlM2U5Y2ExMDk4ODBkMyIsIm5iZiI6MTcyOTA0NjYwMC44MzUsInN1YiI6IjY3MGYyODQ4MDQzMzFkYjRiMTEyNjAyNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.O4ih1i4AWwcPCq79LE-XkTKMISygqRu_jAxkQTJFSrE'
+                const options = {
+                    method: 'GET',
+                    headers: {
+                    accept: 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NjA3OTFlZjg2MTFlZTYxYmJlM2U5Y2ExMDk4ODBkMyIsIm5iZiI6MTcyOTA0NjYwMC44MzUsInN1YiI6IjY3MGYyODQ4MDQzMzFkYjRiMTEyNjAyNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.O4ih1i4AWwcPCq79LE-XkTKMISygqRu_jAxkQTJFSrE'
+                    }
+                };
+                
+                try{
+
+                    let response;
+                    if(format=== 'movie'){
+                        response = await fetch(`https://api.themoviedb.org/3/search/movie?query=${title}&include_adult=false&language=en-US&page=1`, options);
+
+                    }
+                    else{
+                        response = await fetch(`https://api.themoviedb.org/3/search/tv?query=${title}&include_adult=false&language=en-US&page=1`, options)
+                    }
+                    const jsonData = await response.json();
+
+                    const results = jsonData['results'];
+                    setData(results);
+                    
+                }catch(err){
+                    console.log('error')
+                }finally{
+                    setIsLoading(false)
                 }
-              };
-              
-              fetch('https://api.themoviedb.org/3/movie/550/watch/providers', options)
-                .then(res => res.json())
-                // .then(res => console.log(res['results']))
-                
-            
-                
-                .catch(err => console.error(err));
+            }
 
+            fetchServices();
            
+        }else{
+            setData(null);
+
         }
 
-        //fetchServices();
+       
     }, [title])
+
+    if(!data){
+        return <p>No data</p>
+    }
     return(
         <div className=''>
-            <h1>Where to Watch {title}</h1>
+            <h1> Results for: '{title}'</h1>
             <div className='container-r'>
-
-                {/* {results.map(createCard)} */}
-
+                {data.map((show, index) => (
+                    
+                    <a 
+                        className='search-result'
+                        href={`/whereToWatch?title=${format === 'movie' ? encodeURIComponent(show['original_title']) : encodeURIComponent(show['name'])}&id=${show['id']}`}
+                        key={index}
+                    >
+                        {format === 'movie' ? show['original_title'] : show['name']}
+                    </a>
+                    
+                ))}
             </div>
            
 

@@ -11,7 +11,7 @@ const TVPage = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        navigate(`/results?title=${encodeURIComponent(title)}`)
+        navigate(`/results?title=${encodeURIComponent(title)}&format=movie`)
     }
     return(
         <div className='container'>
@@ -23,7 +23,7 @@ const TVPage = () => {
                     
                     <input 
                     type='text'
-                    placeholder='Enter series title'
+                    placeholder='Enter movie title'
                     onChange = {(event) => {
                         setTitle(event.target.value)
                     }}
